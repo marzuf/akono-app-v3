@@ -1,0 +1,112 @@
+/* assets/custom.css */
+
+.mytab {
+    background-color: #2a52be !important; /* Couleur de fond */
+    color: white !important; /* Couleur du texte */
+    border: none !important;
+    padding: 10px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.mytab-slctd {
+    background-color: #000080 !important; /* Couleur de fond pour le tab sélectionné */
+    color: white !important; /* Couleur du texte */
+    border: none !important;
+    padding: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.mysubtab {
+    background-color: #cf0719 !important; /* Couleur de fond */
+    color: white !important; /* Couleur du texte */
+    border: none !important;
+    padding: 10px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.mysubtab-slctd {
+    background-color: #950512 !important; /* Couleur de fond pour le tab sélectionné */
+    color: white !important; /* Couleur du texte */
+    border: none !important;
+    padding: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+.header-row {
+    font-weight: bold;
+    font-size: 1.2rem;
+    background-color: #1e2130;
+    color: white;
+    padding: 10px 0;
+    border-bottom: 2px solid #333;  /* Ajout d'une bordure pour séparer l'en-tête */
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #444;  /* Ajout d'une bordure pour séparer chaque ligne */
+}
+
+.metric-row:hover {
+    background-color: #e3e3e3;
+}
+
+/* Cette règle spécifique empêche l'effet hover sur l'en-tête */
+.metric-row.header-row:hover {
+    background-color: #1e2130;  /* Couleur de fond d'origine de l'en-tête */
+    cursor: default; /* Change le curseur pour indiquer que ce n'est pas interactif */
+}
+
+.metric-row div {
+    flex: 1;
+    text-align: center;
+    border-right: 1px solid #444;  /* Ajout d'une bordure à droite de chaque cellule */
+}
+
+.metric-row div:last-child {
+    border-right: none;  /* Pas de bordure sur la dernière cellule de la ligne */
+}
+
+.metric-row .one.column, .metric-row .four.columns {
+    min-width: 60px;
+}
+
+/*.metric-row .four.columns {
+    flex-grow: 3;
+}*/
+
+
+    .title {
+        font-size: 36px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .description {
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .section {
+        margin-bottom: 30px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 30px;
+    }

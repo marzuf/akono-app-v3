@@ -73,6 +73,52 @@ all_range_pickers = [get_range_picker(x, all_dates) for x in all_range_pickers]
 
 app.layout = html.Div([
 
+
+    # html.Div(id='evotime-figmodal', style={'display': 'none'}, children=[
+    #     html.Div([
+    #         dcc.Graph(id='evotime-modal-graph'),
+    #         html.Button('Close', id='close-modal')
+    #     ], style={'width': '80%', 'margin': 'auto', 'backgroundColor': 'white', 'padding': '20px'})
+    # ],
+    #          # style={'position': 'fixed', 'top': '50%', 'left': '50%', 'transform': 'translate(-50%, -50%)',
+    #          #  'backgroundColor': 'rgba(0, 0, 0, 0.8)', 'zIndex': 1000}
+    #          ),
+
+                          dbc.Modal(
+                              [
+                                  dbc.ModalHeader("Graph Full Screen"),
+                                  dbc.ModalBody(
+                                      dcc.Graph(
+                                          id='evotime-modal-graph',  # Ce sera le graphique dans la modale
+                                      )
+                                  ),
+                                  dbc.ModalFooter(
+                                      dbc.Button("Close", id="close-modal", className="ml-auto")
+                                  ),
+                              ],
+                              id="evotime-modal-graph-modal",
+                              size="xl",
+                              is_open=False,
+                          ),
+
+                          dbc.Modal(
+                              [
+                                  dbc.ModalHeader("Graph Full Screen"),
+                                  dbc.ModalBody(
+                                      dcc.Graph(
+                                          id='stat-modal-graph',  # Ce sera le graphique dans la modale
+                                      )
+                                  ),
+                                  dbc.ModalFooter(
+                                      dbc.Button("Close", id="close-modal-stat", className="ml-auto")
+                                  ),
+                              ],
+                              id="stat-modal-graph-modal",
+                              size="xl",
+                              is_open=False,
+                          ),
+
+
 dcc.Store(id='stored_timeDB', data=time_df.to_dict()),
 dcc.Store(id='stored_dayDB', data=day_df.to_dict()),
 dcc.Store(id='defaut_stored_timeDB', data=time_df.to_dict()),

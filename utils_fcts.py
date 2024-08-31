@@ -774,7 +774,7 @@ def get_startrange_date_vLatest(timecol, period):
     elif period == 'stat_year':
         startd =endd - timedelta(days=365)
     elif period == 'stat_all':
-        endd = min(pd.to_datetime(timecol).dt.date)
+        startd = min(pd.to_datetime(timecol).dt.date)
     else :
         return exit(1)
     return [startd, endd]

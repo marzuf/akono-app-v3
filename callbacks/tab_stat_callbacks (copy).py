@@ -1,6 +1,4 @@
 import sys
-
-import pandas as pd
 from dash.dependencies import Input, Output
 from settings import *
 from utils_fcts import *
@@ -45,21 +43,38 @@ def register_callbacks(app):
     def update_stat_values(n_clicks, selected_period, start_date, end_date, time_db, day_db):
         if n_clicks is None or n_clicks == 0:
             return ["", False, "", ""]
-
-        if selected_period == "stat_perso" and (not start_date or not end_date):
-            return ["", True, "Sélectionnez une période", ""]
-
-        df_time = pd.DataFrame(time_db)
-        df_dayI = pd.DataFrame(day_db)
-
-        if selected_period == "stat_perso":
+        if selected_period == "stat_all":
+            query_time = None#get_query_extractInterval(dbTime_name, None, None)
+        else :
+            if not start_date or not end_date:
+                return ["", True, "Sélectionnez une période", ""]
             start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
             end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-        else :
-            start_date1, end_date1 = get_startrange_date_vLatest(df_time[db_timecol], selected_period)
-            start_date2, end_date2 = get_startrange_date_vLatest(df_dayI[db_daycol], selected_period)
-            start_date= min(start_date1,start_date2)
-            end_date = max(end_date1, end_date2)
+            # query_time = f"SELECT * FROM {dbTime_name} WHERE DATE({db_timecol}) >= DATE('{start_date}') AND DATE({db_timecol}) <= DATE('{end_date}')"
+            query_time = None#get_query_extractInterval(dbTime_name, start_date, end_date)
+
+            if selected_period in ['stat_day', 'stat_week', 'stat_month', 'stat_year']:
+                if start_date != end_date:
+                    return ["ERREUR", True, "Choisir une seule date", ""]
+                start_date = get_startrange_date(end_date, selected_period)
+
+            if selected_period == 'stat_perso' and start_date == end_date:
+                return ["ERREUR", True, "Choisir une date différente", ""]
+
+        # Extraire les données pour l'intervalle sélectionné
+        # conn = sqlite3.connect(db_file)
+        #
+        # df_time = pd.read_sql_query(query_time, conn)
+        #
+        # query_dayP = get_query_extractInterval(dbDayP_name, start_date, end_date)
+        # df_dayP = pd.read_sql_query(query_dayP, conn)
+        #
+        # query_dayI = get_query_extractInterval(dbDayI_name, start_date, end_date)
+        # df_dayI = pd.read_sql_query(query_dayI, conn)
+        # conn.close()
+
+        df_time = time_db
+        df_dayI = day_db
 
 
         means_html = html.Div([
@@ -121,29 +136,6 @@ def register_callbacks(app):
                                           dangerously_allow_html=True)])
         return None
 
-
-
-    # Callback pour gérer l'ouverture et la fermeture de la modale, et l'affichage du graphique
-    @app.callback(
-        [Output('stat-modal-graph-modal', 'is_open'),
-         Output('stat-modal-graph', 'figure')],
-        [Input('stat-graph', 'clickData'),
-         Input('close-modal-stat', 'n_clicks')],
-        [State('stat-modal-graph-modal', 'is_open'),
-         State('stat-graph', 'figure')],
-        prevent_initial_call=True
-    )
-    def toggle_modal_stat(clickData, n_clicks, is_open, myfig):
-        ctx = dash.callback_context
-
-        if ctx.triggered and ctx.triggered[0]['prop_id'] == 'close-modal.n_clicks':
-            return False, go.Figure()  # Fermer la modale
-
-        if clickData:
-            return True, myfig  # Ouvrir la modale avec le graphique
-
-        return is_open, go.Figure()  # Ne change rien si aucun événement n'est détecté
-
     # Callback pour afficher le graphique en fonction de la sélection :
     @app.callback(
         [Output('stat-graph', 'figure'),
@@ -164,25 +156,41 @@ def register_callbacks(app):
                       selected_period, start_date, end_date, time_db, day_db):
         if n_clicks is None or n_clicks == 0:
             return [go.Figure(), False, ""]
+        if selected_period == "stat_all":
+            query_time = None#get_query_extractInterval(dbTime_name, None, None)
+        else :
+            if ((not selected_db or not selected_col or not selected_viz) and
+                            (not start_date or not end_date)):
+                return [go.Figure(), True, "Sélectionnez des données et une période"]
 
-        if not selected_db or not selected_col or not selected_viz:
-            return [go.Figure(), True, "Sélectionnez des données et une période"]
+            if not selected_db or not selected_col or not selected_viz:
+                return [go.Figure(), True, "Sélectionnez des données"]
 
-        if selected_period == "stat_perso" and (not start_date or not end_date):
-            return [go.Figure(), True, "Sélectionnez une période"]
+            if not start_date or not end_date:
+                return [go.Figure(), True, "Sélectionnez une période"]
 
-        if selected_db == dbTime_name:
-            df = pd.DataFrame(time_db)
-        elif selected_db == dbDayI_name:
-            df = pd.DataFrame(day_db)
-        else:
-            sys.exit(1)
-
-        if selected_period == "stat_perso" :
             start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
             end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+
+            if selected_period in ['stat_day', 'stat_week', 'stat_month', 'stat_year']:
+                if start_date != end_date:
+                    return [go.Figure(), True, "Choisir une seule date"]
+                start_date = get_startrange_date(end_date, selected_period)
+
+            if selected_period == 'stat_perso' and start_date == end_date:
+                return [go.Figure(), True, "Choisir une date différente"]
+
+            query_time = None#get_query_extractInterval(selected_db, start_date, end_date)
+
+        # conn = sqlite3.connect(db_file)
+        # df = pd.read_sql_query(query_time, conn)
+        # conn.close()
+        if selected_db == dbTime_name:
+            df = time_db
+        elif selected_db == dbDayI_name:
+            df = day_db
         else:
-            start_date, end_date = get_startrange_date_vLatest(df[db_timecol], selected_period)
+            sys.exit(1)
 
         if selected_db == dbTime_name:
             xcol = db_timecol

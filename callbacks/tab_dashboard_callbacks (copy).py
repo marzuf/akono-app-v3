@@ -126,11 +126,6 @@ def register_callbacks(app):
 
         dbTime_df[db_timecol] = pd.to_datetime(dbTime_df[db_timecol])
 
-
-        # Filtrage des lignes où la date est entre start_date et end_date
-        filtered_df = dbTime_df[(dbTime_df[db_timecol] >= pd.to_datetime(start_date)) &
-                                 (dbTime_df[db_timecol] <= pd.to_datetime(end_date))]
-        dbTime_df = filtered_df
         # Définir la plage complète de temps en minutes
         ## pour avoir de start date 00 et end date 2359
         start_date_minute = datetime.combine(start_date, datetime.min.time())
@@ -223,6 +218,7 @@ def register_callbacks(app):
          Input('close-modal-dayIdashb', 'n_clicks')],
         [State('graph-modal-dayIdashb', 'style'),
          State('store-summary-dayI', 'data'),
+         # State('store-dbDayI_df', 'data'),
          State('stored_dayDB', 'data'),
          State('range-picker-subdayI', 'start_date'),
          State('range-picker-subdayI', 'end_date') ,
@@ -292,7 +288,8 @@ def register_callbacks(app):
          Output('confirm-dialog-subdayI', 'displayed'),
          Output('confirm-dialog-subdayI', 'message'),
          Output('subdayIdashb-range-info', 'children'),
-         Output('store-summary-dayI', 'data')
+         Output('store-summary-dayI', 'data'),
+
          ],
         [Input('show-dayIdashb-btn', 'n_clicks')],
         [
@@ -308,13 +305,13 @@ def register_callbacks(app):
 
         selected_col = "FOO"
         if n_clicks is None or n_clicks == 0:
-            return ["", False, "", "", None]
+            return ["", False, "", "", None, None]
 
         if not selected_db or not selected_col:
-            return ["", True, "Sélectionnez des données", "", None]
+            return ["", True, "Sélectionnez des données", "", None, None]
 
         if selected_period == "stat_perso" and (not start_date or not end_date):
-            return ["", True, "Sélectionnez une période", "",None]
+            return ["", True, "Sélectionnez une période", "",None, None]
 
         if selected_period == "stat_perso":
             start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
@@ -323,6 +320,10 @@ def register_callbacks(app):
             start_date, end_date = get_startrange_date_vLatest(dbDayI_df[db_daycol], selected_period)
 
         date_info = f"Données du {start_date} au {end_date}"
+
+        # conn = sqlite3.connect(db_file)
+        # dbDayI_df = pd.read_sql_query(query, conn)
+        # conn.close()
 
         ####
         dbDayI_df[db_daycol] = pd.to_datetime(dbDayI_df[db_daycol])
@@ -363,8 +364,7 @@ def register_callbacks(app):
             div_container.append(
                 generate_summary_row(
                     i,
-                    # row['Column']+"test",
-                    row['Column'] + " - " + dayIcols_settings[row['Column']]['lab'],
+                    row['Column'],
                     row['Jours avec données'],
                     row['Jours sans données'],
                     sparkline_data,
@@ -404,4 +404,4 @@ def register_callbacks(app):
             style_table={'overflowX': 'auto'},
             style_cell={'textAlign': 'center'}
         ))
-        return [div_container, False, "", date_info,summary_data_dayI]
+        return [div_container, False, "", date_info,summary_data_dayI, dbDayI_df_data]

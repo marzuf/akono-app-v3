@@ -57,9 +57,7 @@ def register_callbacks(app):
                 ),
                 html.Button('Visualiser', id='show-evotimeTimeDBgraph-btn',
                             n_clicks=0),
-                dcc.Graph(id='evotimeTimeDB-graph',
-                          style={'cursor': 'pointer'},
-                          config= {
+                dcc.Graph(id='evotimeTimeDB-graph',config= {
                                         'scrollZoom': True  # Activer le zoom avec la molette
                                     })
             ])

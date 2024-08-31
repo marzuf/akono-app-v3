@@ -34,38 +34,15 @@ def register_callbacks(app):
 
     @app.callback(
         Output('evotimeTimeDB-graph-varinfo', 'children'),
-        [Input('evotimeTimeDB-graph-col', 'value')],
-        [State('evotimeTimeDB-db', 'value')]
+        [Input('evotimeTimeDB-graph-col', 'value')]
     )
-    def update_evotimevarinfo(selected_col, selected_db):
+    def update_evotimevarinfo(selected_col, selected_db=dbTime_name):
         if selected_col and selected_db:
             desc_txt = get_var_desc(selected_col, selected_db)
         else:
             return None
         return html.Div([dcc.Markdown(desc_txt,
                                       dangerously_allow_html=True)])
-
-
-    # Callback pour gérer l'ouverture et la fermeture de la modale, et l'affichage du graphique
-    @app.callback(
-        [Output('evotime-modal-graph-modal', 'is_open'),
-         Output('evotime-modal-graph', 'figure')],
-        [Input('evotimeTimeDB-graph', 'clickData'),
-         Input('close-modal', 'n_clicks')],
-        [State('evotime-modal-graph-modal', 'is_open'),
-         State('evotimeTimeDB-graph', 'figure')],
-        prevent_initial_call=True
-    )
-    def toggle_modal_evotime(clickData, n_clicks, is_open, myfig):
-        ctx = dash.callback_context
-
-        if ctx.triggered and ctx.triggered[0]['prop_id'] == 'close-modal.n_clicks':
-            return False, go.Figure()  # Fermer la modale
-
-        if clickData:
-            return True, myfig  # Ouvrir la modale avec le graphique
-
-        return is_open, go.Figure()  # Ne change rien si aucun événement n'est détecté
 
     # Callback pour afficher le graphique en fonction de la sélection :
     @app.callback(
@@ -147,7 +124,7 @@ def register_callbacks(app):
                         go.Scatter(
                             x=df[xcol],
                             y=df[col],
-                            mode='lines+markers',
+                            mode='lines',
                             name=col,
                             yaxis=f'y{i + 1}'
 

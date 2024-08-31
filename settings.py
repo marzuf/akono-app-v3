@@ -598,7 +598,7 @@ dayIcols_settings={
     "source":"BSP"
 },
 "I11006": {### VarioTrack
-    "lab" : "Production du jour[Ah]",
+    "lab" : "Production du jour [Ah]",
     "description": "Production (daily) (Production in  Ah for the current day)",
     "unit": "Ah",
     "scale": "",
